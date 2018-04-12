@@ -236,22 +236,6 @@ dbus.connect_signal("ru.gentoo.kbdd", function(...)
 kbdwidget:buttons(awful.util.table.join(awful.button({ }, 1, change)))
 fixedwidget4 = wibox.layout.constraint(kbdwidget, "exact", 50)
 
---CPU---------------
--- Инициализация виджета
-cpuwidget = awful.widget.graph()
--- Свойства графика
-cpuwidget.width = 50
-cpuwidget.background_color = "#00000080"
-cpuwidget.color = { type = "linear", from = { 0, 0 }, to = { 10,0 }, stops = { {0, "#ed0c0c"}, {0.5, "#71e21b"}, 
-                    {1, "#ee170c" }}}
--- Регистрация виджета
-vicious.register(cpuwidget, vicious.widgets.cpu, "$1" ,1)
-
--- Инициализация виджета
-cpuwidget2 = wibox.widget.textbox()
--- Регистрация виджета
-vicious.register(cpuwidget2, vicious.widgets.cpu, "$1%" ,2)
-fixedwidget = wibox.layout.constraint(cpuwidget2, "exact", 35)
 
 sensors = wibox.widget.textbox()
 vicious.register(sensors, vicious.widgets.thermal, "$1°C", 3, { "coretemp.0/hwmon/hwmon0", "core"})
@@ -362,7 +346,7 @@ pacwidget:set_font("odstemplik Bold 17")
 
 --
 -- Network Widget
-netwidget = blingbling.net({ interface = "eth0", show_text = false })
+netwidget = blingbling.net({ interface = "wlan0", show_text = false })
 netwidget:set_ippopup()
 netwidget:set_graph_line_color("#e65117ff")
 ----netwidget:set_background_color("#f7010150")
@@ -592,7 +576,7 @@ local t_menu ={
            {"____FIRST", function() awful.client.movetotag(t1) end },
            {"____SECOND", function() awful.client.movetotag(t2) end},
           -- {"____THIRD", function() awful.client.movetotag(t3) end},
-           --{"____FOURTH", function() awful.client.movetotag(t4) end},
+          -- {"____FOURTH", function() awful.client.movetotag(t4) end},
            --{"____FIFTH", function() awful.client.movetotag(t5) end},           
 }
 
@@ -701,9 +685,6 @@ awful.screen.connect_for_each_screen(function(s)
             mylauncher,
             space2,
             s.mytaglist,
-            space1,
-            space,
-            myapp2start,
            space,
               -- MPD widget
           spr,
@@ -738,14 +719,13 @@ awful.screen.connect_for_each_screen(function(s)
             space1,
             fixedwidget5,
             fixedwidget4,
-  --          space,
-  --          pacman,
-  --          pacwidget,
-           -- space1,
             space,
-            cpuwidget,
-            space1,
-            fixedwidget,
+            pacman1,
+            pacwidget,
+           -- space1,
+--            cpuwidget,
+--            space1,
+--            fixedwidget,
             --space,
            -- cpuwidget,
             --space1,

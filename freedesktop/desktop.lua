@@ -51,8 +51,8 @@ local desktop = {
     -- Default parameters
     iconsize   = { width = 36,  height = 36 },
     labelsize  = { width = 100, height = 15 },
-   -- margin     = { x = 20, y = 20 },
-    margin     = { x = 20, y = 40 },
+   --margin     = { x = 20, y = 20 },
+    margin     = { x = 40, y = 100 },
 }
 
 -- MIME types list
@@ -83,15 +83,15 @@ function desktop.add_single_icon(args, label, icon, onclick)
     -- define icon dimensions and position
     if not desktop_current_pos[s] then
        -- desktop_current_pos[s] = { x = (capi.screen[s].geometry.x + args.iconsize.width + args.margin.x), y = 40 }
-       desktop_current_pos[s] = { x = 1300, y = 100 }
+       desktop_current_pos[s] = { x = 60, y = 70 }
     end
 
     local totheight = (icon and args.iconsize.height or 0) + (label and args.labelsize.height or 0)
     if totheight == 0 then return end
 
-    if desktop_current_pos[s].y + totheight > capi.screen[s].geometry.height - 40 then
+    if desktop_current_pos[s].y + totheight > capi.screen[s].geometry.height - 70 then
         desktop_current_pos[s].x = desktop_current_pos[s].x + args.labelsize.width + args.iconsize.width + args.margin.x
-        desktop_current_pos[s].y = 40
+        desktop_current_pos[s].y = 70
     end
 
     local common = { screen = s, bg = "#00000000", fg = "#f29466", visible = true, type = "desktop" }
@@ -243,7 +243,7 @@ end
 function desktop.add_icons(args)
     args            = args or {}
     args.screen     = args.screen or mouse.screen
-    args.dir        = args.dir or os.getenv("HOME") .. "/Desktop"
+    args.dir        = args.dir or os.getenv("HOME") .. "/desktop"
     args.showlabels = args.showlabel or true
     args.open_with  = args.open_with or "xdg_open"
     args.baseicons  = args.baseicons or desktop.baseicons
