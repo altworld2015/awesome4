@@ -582,18 +582,18 @@ local taglist_buttons = awful.util.table.join(
 ---Client_menu
 
 local t1 = awful.tag.find_by_name(awful.client.movetotag( "Ƅ" ),"Ƅ" )  
-local t2 = awful.tag.find_by_name(awful.client.movetotag( "ƀ" ),"ƀ" )
-local t3 = awful.tag.find_by_name(awful.client.movetotag( "Ɵ" ),"Ɵ" )
-local t4 = awful.tag.find_by_name(awful.client.movetotag( "ƈ" ),"ƈ" )
-local t5 = awful.tag.find_by_name(awful.client.movetotag( "Ɗ" ),"Ɗ" )
+--local t2 = awful.tag.find_by_name(awful.client.movetotag( "ƀ" ),"ƀ" )
+local t2 = awful.tag.find_by_name(awful.client.movetotag( "Ɵ" ),"Ɵ" )
+--local t4 = awful.tag.find_by_name(awful.client.movetotag( "ƈ" ),"ƈ" )
+--local t5 = awful.tag.find_by_name(awful.client.movetotag( "Ɗ" ),"Ɗ" )
 
 
 local t_menu ={ 
            {"____FIRST", function() awful.client.movetotag(t1) end },
            {"____SECOND", function() awful.client.movetotag(t2) end},
-           {"____THIRD", function() awful.client.movetotag(t3) end},
-           {"____FOURTH", function() awful.client.movetotag(t4) end},
-           {"____FIFTH", function() awful.client.movetotag(t5) end},           
+          -- {"____THIRD", function() awful.client.movetotag(t3) end},
+           --{"____FOURTH", function() awful.client.movetotag(t4) end},
+           --{"____FIFTH", function() awful.client.movetotag(t5) end},           
 }
 
 local move_menu = ({ items = { { "Move to tag", t_menu, "/usr/share/icons/Black Diamond-V2/scalable/11.png" },
