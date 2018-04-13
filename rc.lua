@@ -27,8 +27,8 @@ local APW = require("apw/widget")
 local hotkeys_popup = require("awful.hotkeys_popup").widget
 --local radical = require("radical")
 --require("collision")()
-
-awful.spawn.with_shell("sleep 12 && xcompmgr -cCfF -r7 -o.65 -l-10 -t-8 -D7 &")
+desktop_icons = require("desktop_icons")
+--awful.spawn.with_shell("sleep 12 && xcompmgr -cCfF -r7 -o.65 -l-10 -t-8 -D7 &")
 --awful.util.spawn_with_shell("xcompmgr -cCfF &")
 --awful.util.spawn_with_shell("sleep 7 && killall xcompmgr &")
 --awful.spawn.with_shell("sleep 12 && compton -icCfF -r7 -o.65 -l-10 -t-8 -D7 &")
@@ -95,9 +95,9 @@ awful.layout.layouts = {
 }
 -- }}}
 
-for s in screen do
-    freedesktop.desktop.add_icons({screen = s})
-end
+--for s in screen do
+--    freedesktop.desktop.add_icons({screen = s})
+--end
 
 -- {{{ Helper functions
 local function client_menu_toggle_fn()
@@ -119,7 +119,7 @@ end
 -- Create a laucher widget and a main menu
 myawesomemenu = {
    { "hotkeys", function() return false, hotkeys_popup.show_help end, "/home/valera/sharingan-icons-1.5/acestream16.png"},
-   { "manual", "xfce4-terminal -e 'man awesome'", "/home/valera/.icons/Black Diamond-V2/scalable/places/folder-documents.png"},   
+   { "manual", "xfce4-terminal -e 'man awesome'", "/home/valera/.icons/Black Diamond-V2/scalable/places/folder-documents.png"},
   -- { "edit config", editor_cmd .. " " .. awesome.conffile, "/home/valera/.icons/Black Diamond-V2/scalable/emblems/emblem-xxs.png"},
    { "edit config", "leafpad /home/valera/.config/awesome/rc.lua", "/home/valera/.icons/Black Diamond-V2/scalable/emblems/emblem-xxs.png"},
    { "restart", awesome.restart, "/home/valera/sharingan-icons-1.5/clamtk.png"},
@@ -138,7 +138,7 @@ standart_menu = {
     { "Google-Earth", "googleearth", "/home/valera/.icons/Black Diamond-V2/scalable/apps/googleearth-icon.png" },
     { "Thuderbird", "thunderbird", "/home/valera/.icons/Black Diamond-V2/scalable/emblems/emblem-web.png" },
     { "XTERM", "xterm", "/home/valera/.icons/Black Diamond-V2/scalable/apps/xterm.png"  },
-    { "KDEnLive", "kdenlive", "/home/valera/.icons/Black Diamond-V2/scalable/apps/kdenlive.png" }             
+    { "KDEnLive", "kdenlive", "/home/valera/.icons/Black Diamond-V2/scalable/apps/kdenlive.png" }
 }
 
 mymainmenu = freedesktop.menu.build({
@@ -147,7 +147,7 @@ mymainmenu = freedesktop.menu.build({
                                       { "____________"},
                                     -- other triads can be put here
                                       },
-                                    
+
                                     after = {
                                      { "____________"},
                                    -- { "awesome", myawesomemenu, "/home/valera/.icons/Black Diamond-V2/scalable/places/emptytrash.png" },
@@ -175,8 +175,8 @@ local l = awful.layout.suit  -- Just to save some typing: use an alias.
 local layouts = { l.tile.bottom, l.floating }
 awful.tag(names, s, layouts )
 awful.screen.connect_for_each_screen(function(s)
---local t = awful.tag.find_by_name(awful.tag.setncol( 4 ),"ƀ" ) 
---local _tag = awful.tag.find_by_name(awful.tag.setmwfact(0.15, t3), "ƈ" ) 
+--local t = awful.tag.find_by_name(awful.tag.setncol( 4 ),"ƀ" )
+--local _tag = awful.tag.find_by_name(awful.tag.setmwfact(0.15, t3), "ƈ" )
 --awful.tag.setncol( 4, t )
 --awful.tag.setncol( 2, t1)
 --awful.tag.setmwfact (0.15, screen[1].tags[3])
@@ -186,7 +186,7 @@ awful.tag.setncol( 2, screen[1].tags[1])
 ----awful.tag.setncol( 2, screen[s].tags[3])
 --awful.tag.setmwfact(0.15, _tag)
 --awful.tag.setmfpol(0.70, screen[s].tags[3])
---awful.tag.seticon("/home/valera/Sharingan Icons by Kshegzyaj/PNG/128x128/Sharingan 2 Virgules.png", screen[s].tags[1]) 
+--awful.tag.seticon("/home/valera/Sharingan Icons by Kshegzyaj/PNG/128x128/Sharingan 2 Virgules.png", screen[s].tags[1])
 ----awful.tag.setproperty(screen[s].tags[3], "master_width_factor", 0.70)
 end)
 
@@ -196,14 +196,14 @@ mykeyboardlayout = awful.widget.keyboardlayout()
 
 mytextclock1 = wibox.widget.textclock(" <span color=\"#e65117\"><span font=\"odstemplik Bold 18\"><b>%H:%M</b></span></span>")
 mytextclock1:buttons(awful.util.table.join(
-    --awful.button({ }, 1, function () awful.util.spawn("xterm -e 'curl wttr.in; exec bash'", false) end) 
-      awful.button({ }, 1, function () awful.util.spawn("/home/valera/.config/awesome/ww", false) end) 
+    --awful.button({ }, 1, function () awful.util.spawn("xterm -e 'curl wttr.in; exec bash'", false) end)
+      awful.button({ }, 1, function () awful.util.spawn("/home/valera/.config/awesome/ww", false) end)
 ))
 
 mytextclock1 = wibox.widget.textclock(" <span color=\"#e65117\"><span font=\"odstemplik Bold 16\"><b>%H:%M</b></span></span>")
 --mytextclock1:buttons(awful.util.table.join(
-  -- -- awful.button({ }, 1, function () awful.spawn("xterm -e 'curl wttr.in; exec bash'", false) end) 
-    --awful.button({ }, 1, function () awful.util.spawn("/home/valera/Документы/ww", false) end) 
+  -- -- awful.button({ }, 1, function () awful.spawn("xterm -e 'curl wttr.in; exec bash'", false) end)
+    --awful.button({ }, 1, function () awful.util.spawn("/home/valera/Документы/ww", false) end)
 --))
 
 
@@ -236,10 +236,6 @@ dbus.connect_signal("ru.gentoo.kbdd", function(...)
 kbdwidget:buttons(awful.util.table.join(awful.button({ }, 1, change)))
 fixedwidget4 = wibox.layout.constraint(kbdwidget, "exact", 50)
 
-
-sensors = wibox.widget.textbox()
-vicious.register(sensors, vicious.widgets.thermal, "$1°C", 3, { "coretemp.0/hwmon/hwmon0", "core"})
-fixedwidget1 = wibox.layout.constraint(sensors, "exact", 37)
 
 memicon = wibox.widget.imagebox()
 memicon.image = "/home/valera/.icons/Black Diamond-V2/scalable/apps/gnome-system-monitor.png"
@@ -521,7 +517,7 @@ mytextclock = wibox.widget.textclock()
 
 local tag_menu = {
     {"⸻⸻⸻"},
-    { "Add Tag",      function() lain.util.add_tag()     end, "/usr/share/icons/Black Diamond-V2/scalable/actions/add1.png" },    
+    { "Add Tag",      function() lain.util.add_tag()     end, "/usr/share/icons/Black Diamond-V2/scalable/actions/add1.png" },
     { "Rename Tag",  function() lain.util.rename_tag()  end, "/home/valera/.icons/Black Diamond-V2/scalable/places/emptytrash.png" },
     { "Tag right",          function() lain.util.move_tag(1)   end, "/home/valera/.config/awesome/themes/colored/icons/right.png" },
     { "Tag left",          function() lain.util.move_tag(-1)  end , "/home/valera/.config/awesome/themes/colored/icons/left.png" },
@@ -539,7 +535,7 @@ local function tag_menu_toggle()
             instance = nil
         else
             --instance = lain.util.menu_clients_current_tags(tag_menu)
-              instance =  awful.menu(tag_menu):show() 
+              instance =  awful.menu(tag_menu):show()
         end
     end
 end
@@ -552,8 +548,8 @@ local taglist_buttons = awful.util.table.join(
                                                   client.focus:move_to_tag(t)
                                               end
                                           end),
-                    awful.button({ }, 2, awful.tag.viewtoggle), 
-                    awful.button({ }, 3, tag_menu_toggle () ),                                                                  
+                    awful.button({ }, 2, awful.tag.viewtoggle),
+                    awful.button({ }, 3, tag_menu_toggle () ),
                     awful.button({ modkey }, 3, function(t)
                                               if client.focus then
                                                   client.focus:toggle_tag_fn(t)
@@ -565,19 +561,19 @@ local taglist_buttons = awful.util.table.join(
 -------------
 ---Client_menu
 
-local t1 = awful.tag.find_by_name(awful.client.movetotag( "Ƅ" ),"Ƅ" )  
+local t1 = awful.tag.find_by_name(awful.client.movetotag( "Ƅ" ),"Ƅ" )
 --local t2 = awful.tag.find_by_name(awful.client.movetotag( "ƀ" ),"ƀ" )
 local t2 = awful.tag.find_by_name(awful.client.movetotag( "Ɵ" ),"Ɵ" )
 --local t4 = awful.tag.find_by_name(awful.client.movetotag( "ƈ" ),"ƈ" )
 --local t5 = awful.tag.find_by_name(awful.client.movetotag( "Ɗ" ),"Ɗ" )
 
 
-local t_menu ={ 
+local t_menu ={
            {"____FIRST", function() awful.client.movetotag(t1) end },
            {"____SECOND", function() awful.client.movetotag(t2) end},
           -- {"____THIRD", function() awful.client.movetotag(t3) end},
           -- {"____FOURTH", function() awful.client.movetotag(t4) end},
-           --{"____FIFTH", function() awful.client.movetotag(t5) end},           
+           --{"____FIFTH", function() awful.client.movetotag(t5) end},
 }
 
 local move_menu = ({ items = { { "Move to tag", t_menu, "/usr/share/icons/Black Diamond-V2/scalable/11.png" },
@@ -591,9 +587,9 @@ local move_menu = ({ items = { { "Move to tag", t_menu, "/usr/share/icons/Black 
              {"Restore",  function() awful.util.spawn_with_shell("xdotool key Shift+Super_L+m Control+Super_L+m") end, "/usr/share/icons/Black Diamond-V2/scalable/restore.png"},
              {"Close", function() awful.util.spawn_with_shell("xdotool key Super_L+c") end, "/usr/share/icons/Black Diamond-V2/scalable/actions/add.png"},
 --             {"menu", function() awful.connect_signal('mouse::leave', function () naughty.destroy(showtempinfo) end) end},
-             { "Clients", function(c) awful.menu.clients() end, "/usr/share/icons/Black Diamond-V2/scalable/apps/console.png" }, 
+             { "Clients", function(c) awful.menu.clients() end, "/usr/share/icons/Black Diamond-V2/scalable/apps/console.png" },
                                   }
-                        })        
+                        })
 
 
 local tasklist_buttons = awful.util.table.join(
@@ -613,9 +609,9 @@ local tasklist_buttons = awful.util.table.join(
                                                   c:raise()
                                               end
                                           end),
-                 
-                    awful.button({ }, 8, client_menu_toggle_fn()),                   
-                  awful.button({ }, 2, function (c)  c:kill()                         end),                                  
+
+                    awful.button({ }, 8, client_menu_toggle_fn()),
+                  awful.button({ }, 2, function (c)  c:kill()                         end),
                   awful.button({ }, 3, function (c)
                                         if instance then
                                         instance:hide()
@@ -693,7 +689,7 @@ awful.screen.connect_for_each_screen(function(s)
           stop_icon,
           spr,
           next_icon,
-          spr, 
+          spr,
             space2,
           --  myapp1start,
            -- space,
@@ -967,8 +963,8 @@ end
 
 clientbuttons = awful.util.table.join(
     awful.button({ }, 1, function (c) client.focus = c; c:raise() end),
-    awful.button({  }, 8, awful.mouse.client.move),
-    awful.button({ }, 9, function () awful.menu(move_menu):toggle() end),
+    awful.button({ modkey }, 1, awful.mouse.client.move),
+   -- awful.button({ }, 3, function () awful.menu(move_menu):toggle() end),
     awful.button({ modkey }, 3, awful.mouse.client.resize))
 
 -- Set keys
@@ -979,7 +975,7 @@ root.keys(globalkeys)
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
     -- All clients will match this rule.
-    { rule = { },    
+    { rule = { },
       properties = { border_width = beautiful.border_width,
                      border_color = beautiful.border_normal,
                      focus = awful.client.focus.filter,
@@ -988,7 +984,7 @@ awful.rules.rules = {
                      buttons = clientbuttons,
                      screen = awful.screen.preferred,
                      size_hints_honor = false,
-                     placement = awful.placement.no_overlap+awful.placement.no_offscreen                    
+                     placement = awful.placement.no_overlap+awful.placement.no_offscreen
      }
     },
 
@@ -1029,11 +1025,11 @@ awful.rules.rules = {
        { rule = { class = "MPlayer" },
       properties = { floating = true } },
      { rule = { class = "Clementine" },
-      properties = { floating = true, border_width = 0 } },  
+      properties = { floating = true, border_width = 0 } },
     { rule = { instance = "plugin-container" },
      properties = { onfocus = true, floating = true, border_width = 0, ontop = true, fullscreen = true} },
     { rule = { class = "Sopcast-player.py" },
-      properties = { floating = true, border_width = 0 },  
+      properties = { floating = true, border_width = 0 },
       callback = function (c)
       awful.placement.centered(c,nil)
      end
@@ -1044,7 +1040,7 @@ awful.rules.rules = {
       properties = { floating = true } },
      { rule = { class = "Catfish" },
       properties = { floating = true } },
-    { rule = { class = "Gnome-mplayer" }, 
+    { rule = { class = "Gnome-mplayer" },
       properties = { floating = true } },
      { rule = { class = "smplayer" },
       properties = { floating = true } },
@@ -1055,10 +1051,10 @@ awful.rules.rules = {
        end},
     { rule = { class = "Tor Browser" },
       properties = { floating = true, border_width = 0 } },
-    
+
     -- { rule = { class = "Xfce4-terminal" },
      -- properties = { size_hints_honor = true } },
-    
+
      { rule = { class = "Vlc" },
 --     properties = { screen = 1,  tag = "ƈ" }
        properties = { floating = true }
@@ -1084,19 +1080,19 @@ awful.rules.rules = {
      -- properties = { floating = true, ontop = true } },
     { rule = { class = "Xwinmosaic" },
       properties = { floating = true },
-     properties = { floating = true },  
+     properties = { floating = true },
       callback = function (c)
       awful.placement.centered(c,nil)
      end
   },
     { rule = { class = "Gxmessage" },
-      properties = { floating = true, ontop = true } },    
+      properties = { floating = true, ontop = true } },
       { rule = { class = "Florence" },
-      properties = { floating = true, focus = false, offfocus = true, onfocus = false, ontop = true, top = false, border_width = 0 } }, 
+      properties = { floating = true, focus = false, offfocus = true, onfocus = false, ontop = true, top = false, border_width = 0 } },
     { rule = { class = "Xfce4-appfinder" },
-      properties = { floating = true } }, 
+      properties = { floating = true } },
     { rule = { class = "pinentry" },
-      properties = { floating = true } }, 
+      properties = { floating = true } },
     { rule = { class = "xine" },
       properties = { floating = true } },
 
@@ -1129,7 +1125,7 @@ client.connect_signal("manage", function (c)
       and not c.size_hints.program_position then
         -- Prevent clients from being unreachable after screen count changes.
         awful.placement.no_offscreen(c)
-    end 
+    end
 end)
 
 -- Add a titlebar if titlebars_enabled is set to true in the rules.
