@@ -152,7 +152,7 @@ vicious.register(pacwidget, vicious.widgets.pkg,
 
                     for line in s:lines() do
                         --str = str .. line .. "\n"
-                         str = "<span color=\"#e65117\"><span font=\"Sony Sketch EF Bold 11\"><b>" .. str .. " " .. line .. "</b></span></span>\n"
+                         str = "<span color=\"#e65117\"><span font=\"Sony Sketch EF Bold 11\">" .. str .. " " .. line .. "</span></span>\n"
                         i = i + 1
 		    end
                     pacwidget_t:set_markup(str)
