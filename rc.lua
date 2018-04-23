@@ -28,8 +28,10 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 --local radical = require("radical")
 --require("collision")()
 desktop_icons = require("desktop_icons")
-
-awful.spawn.with_shell("sleep 15 && xcompmgr -cCfF -r7 -o.65 -l-10 -t-8 -D7 &")
+mpd = require("mpd")
+------------------------------
+------------------------------
+--awful.spawn.with_shell("sleep 15 && xcompmgr -cCfF -r7 -o.65 -l-10 -t-8 -D7 &")
 --awful.util.spawn_with_shell("xcompmgr -cCfF &")
 --awful.util.spawn_with_shell("sleep 7 && killall xcompmgr &")
 --awful.spawn.with_shell("sleep 12 && compton -icCfF -r7 -o.65 -l-10 -t-8 -D7 &")
@@ -123,6 +125,7 @@ myawesomemenu = {
    { "manual", "xfce4-terminal -e 'man awesome'", "/home/valera/.icons/Black Diamond-V2/scalable/places/folder-documents.png"},
   -- { "edit config", editor_cmd .. " " .. awesome.conffile, "/home/valera/.icons/Black Diamond-V2/scalable/emblems/emblem-xxs.png"},
    { "edit config", "leafpad /home/valera/.config/awesome/rc.lua", "/home/valera/.icons/Black Diamond-V2/scalable/emblems/emblem-xxs.png"},
+   { "edit desktop_icon", "leafpad /home/valera/.config/awesome/desktop_icons.lua", "/home/valera/.config/awesome/appicons/desktop.png"},
    { "restart", awesome.restart, "/home/valera/sharingan-icons-1.5/clamtk.png"},
    { "quit", function() awesome.quit() end, "/home/valera/sharingan-icons-1.5/Curtains.png"}
 }
@@ -170,10 +173,10 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 --awful.tag({ 1, 2, 3, 4, 5 }, s, awful.layout.layouts[1])
 
 --local names = { "Ƅ", "ƀ", "Ɵ", "ƈ", "Ɗ" }
-local names = { "Ƅ", "Ɵ" }
+local names = { "Ƅ", "Ɵ", "Ɗ" }
 local l = awful.layout.suit  -- Just to save some typing: use an alias.
 --local layouts = { l.tile.bottom, l.tile.bottom, l.tile.bottom, l.spiral.dwindle, l.floating }
-local layouts = { l.tile.bottom, l.floating }
+local layouts = { l.tile.bottom, l.tile.bottom, l.floating }
 awful.tag(names, s, layouts )
 awful.screen.connect_for_each_screen(function(s)
 --local t = awful.tag.find_by_name(awful.tag.setncol( 4 ),"ƀ" )
@@ -183,10 +186,10 @@ awful.screen.connect_for_each_screen(function(s)
 --awful.tag.setmwfact (0.15, screen[1].tags[3])
 ----awful.tag.setnmaster(1, screen[1].tags[3])
 awful.tag.setncol( 2, screen[1].tags[1])
-----awful.tag.setncol( 2, screen[1].tags[2])
-----awful.tag.setncol( 2, screen[s].tags[3])
+awful.tag.setncol( 2, screen[1].tags[2])
+--awful.tag.setncol( 2, screen[1].tags[3])
 --awful.tag.setmwfact(0.15, _tag)
---awful.tag.setmfpol(0.70, screen[s].tags[3])
+--awful.tag.setmfpol(0.70, screen[s].tags[2])
 --awful.tag.seticon("/home/valera/Sharingan Icons by Kshegzyaj/PNG/128x128/Sharingan 2 Virgules.png", screen[s].tags[1])
 ----awful.tag.setproperty(screen[s].tags[3], "master_width_factor", 0.70)
 end)
@@ -245,12 +248,18 @@ memicon.image = "/home/valera/.icons/Black Diamond-V2/scalable/apps/gnome-system
 tempwidget = awful.widget.launcher({ name = "tempwidget",
                                      image = "/home/valera/.config/awesome/appicons/speedownload.png",
                                      command = "/home/valera/Документы/ww"})
-sensors = wibox.widget.textbox()
-vicious.register(sensors, vicious.widgets.sensors, "<span <span color=\"#e65117\"><b>$2</b></span>", 5)
---vicious.register(sensors, vicious.widgets.sensors, "$1°C", 3, { "virtual/hwmon/hwmon1/", "core"})
-sensors:set_font("odstemplik Bold 16")
-fixedwidget1 = wibox.layout.constraint(sensors, "exact", 40)
-
+---------
+---------
+local markup = lain.util.markup
+local sensors = lain.widget.temp({
+    timeout = 5,
+    settings = function()
+        widget:set_markup(markup.fontfg("odstemplik Bold 15", "#e65117", "".. coretemp_now .. "°C"))
+    end
+})
+sensors = wibox.layout.constraint(widget, "exact", 45)
+widget:set_align("center")
+---------
 memicon = awful.widget.launcher({ name = "prev",
                                      image = "/home/valera/.config/awesome/appicons/xfce4-terminal.png",
                                      command = "xfce4-terminal -e htop"})
@@ -289,7 +298,7 @@ memicon:connect_signal('mouse::leave', function () naughty.destroy(showtempinfo)
 memwidget = wibox.widget.textbox()
 --vicious.register(memwidget, vicious.widgets.mem, "<span font=\"odstemplik Bold 14\"><b>$2/$3</b></span>", 1)
 --vicious.register(memwidget, vicious.widgets.mem, "<span font=\"odstemplik Bold 18\"><b>$2 m</b></span>", 5)
-vicious.register(memwidget, vicious.widgets.mem, "<span >$2 m</span>", 5)
+vicious.register(memwidget, vicious.widgets.mem, "<span color=\"#e65117\"><span font=\"odstemplik Bold 15\"><b>$2 m</b></span></span>", 5)
 fixedmemwidget = wibox.layout.constraint(memwidget, "exact", 147)
 memwidget.align = "center"
 fixedwidget3 = wibox.layout.constraint(memwidget, "exact", 50)
@@ -317,29 +326,6 @@ volicon = awful.widget.launcher({ name = "pavucontrol",
 pacman1 = awful.widget.launcher({ name = "pacman",
                                      image = "/home/valera/.config/awesome/appicons/skull32.png",
                                      command = "xfce4-terminal -e 'yaourt -Syyu --aur'"})
--- Pacman Widget
-pacwidget = wibox.widget.textbox()
-
-pacwidget_t = awful.tooltip({ objects = { pacwidget},})
-
-vicious.register(pacwidget, vicious.widgets.pkg,
-                function(widget,args)
-                    local io = { popen = io.popen }
-                    --local s = io.popen("pacman -Qu -b /tmp/checkup-db-valera")
-                    local s = io.popen("/usr/bin/checkupdates")
-                    local str = ''
-		    local i = 0
-
-                    for line in s:lines() do
-                        str = str .. line .. "\n"
-                        i = i + 1
-		    end
-                    pacwidget_t:set_text(str)
-                    s:close()
-                    return "<span color=\"#e65117\"><b>:"  .. i ..  "</b></span>"
-                end, 1800, "Arch C")
-pacwidget:set_font("odstemplik Bold 17")
-
 
 --
 -- Network Widget
@@ -355,12 +341,63 @@ netwidget:set_font_size(14)
 netwidget.height = 0.50
 fixedwidget5 = wibox.layout.constraint(netwidget, "exact", 23)
 -----------
+-- Battery
+local bat_icon = wibox.widget.imagebox(beautiful.widget_battery)
+local bat = lain.widget.bat({
+    battery = "BAT0",
+    timeout = 1,
+    notify = "off",
+    n_perc = {5,15},
+    settings = function()
+    bat_notification_low_preset = {
+            title = "Battery low",
+            text = "Plug the cable!",
+            timeout = 15,
+            fg = beautiful.fg_normal,
+            bg = beautiful.bg_normal
+        }
+        bat_notification_critical_preset = {
+            title = "Battery exhausted",
+            text = "Shutdown imminent",
+            timeout = 15,
+            fg = beautiful.bat_fg_critical,
+            bg = beautiful.bat_bg_critical
+        }
+        if bat_now.status ~= "N/A" then
+            if bat_now.status == "Charging" then
+                widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "+" .. bat_now.perc .. "%")))
+                bat_icon:set_image(beautiful.widget_ac)
+            elseif bat_now.status == "Full" then
+                widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "~" .. bat_now.perc .. "%")))
+                bat_icon:set_image(beautiful.widget_battery)
+            elseif tonumber(bat_now.perc) <= 35 then
+                bat_icon:set_image(beautiful.widget_battery_empty)
+                widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "-" .. bat_now.perc .. "%")))
+            elseif tonumber(bat_now.perc) <= 80 then
+                bat_icon:set_image(beautiful.widget_battery_low)
+                widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "-" .. bat_now.perc .. "%")))
+            elseif tonumber(bat_now.perc) <= 99 then
+                bat_icon:set_image(beautiful.widget_battery)
+                widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "-" .. bat_now.perc .. "%")))
+            else
+                bat_icon:set_image(beautiful.widget_battery)
+                widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "-" .. bat_now.perc .. "%")))
+            end
+        else
+            widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", " AC ")))
+            bat_icon:set_image(beautiful.widget_ac)
+        end
+    end
+})
+local bat_widget = wibox.container.background(bat.widget)
+bat_widget.bgimage=beautiful.widget_display
 
 ---{{{-Batery------------------------------------------------------
 baticcon = wibox.widget.imagebox()
 baticcon:set_image(beautiful.widget_batfull)
 batpct = wibox.widget.textbox()
 batpct:set_font("odstemplik Bold 14")
+--batpct:set_markup("<span color=\"#e65117\">bat_charge .. "%"</span>")
 vicious.register(batpct, vicious.widgets.bat, function(widget, args)
   bat_state  = args[1]
   bat_charge = args[2]
@@ -380,7 +417,8 @@ vicious.register(batpct, vicious.widgets.bat, function(widget, args)
     if args[1] == "+" then
     end
   end
-  return args[2] .. "%"
+  return ""
+  --  return  function("<span color=\"#e65117\"><b>"" .. args[2] .. "%"</b></span>") end
 end, nil, "BAT0")
 -- Buttons
 function popup_bat()
@@ -403,67 +441,10 @@ function popup_bat()
 end
 --batpct:buttons(awful.util.table.join(awful.button({ }, 1, popup_bat)))
 --baticcon:buttons(batpct:buttons())
+batpct.align = "center"
+fixbat = wibox.layout.constraint(batpct, "exact", 30)
 ---------------------------------------------------------------------------
--- MPD
 
-
-stop_icon = wibox.widget.imagebox()
-stop_icon.image = "/home/valera/.config/awesome/icons/mpd/mpd_play.png"
-pause_icon = wibox.widget.imagebox()
-pause_icon.image = "/home/valera/.config/awesome/icons/mpd/mpd_pause.png"
-play_pause_icon = wibox.widget.imagebox()
-play_pause_icon.image = "/home/valera/.config/awesome/icons/mpd/mpd_stop.png"
-mpd_sepr = wibox.widget.imagebox()
-mpd_sepr.image = "/home/valera/.config/awesome/icons/mpd/mpd_sepr.png"
-
-mpdwidget = lain.widget.mpd({
-    settings = function ()
-        if mpd_now.state == "play" then
-            mpd_notification_preset.font = "Z003 15"
-            mpd_now.artist = mpd_now.artist:upper():gsub("&.-;", string.lower)
-            mpd_now.title = mpd_now.title:upper():gsub("&.-;", string.lower)
-            --widget:set_markup(markup.font("odstemplik Bold 18", " ")
-              --                .. markup.font("odstemplik Bold 18",
-              --                mpd_now.artist
-              --                .. " - " ..
-              --                mpd_now.title
-              --                .. markup.font("odstemplik Bold 18", " ")))
-            play_pause_icon = wibox.widget.imagebox(beautiful.mpd_pause)
-            mpd_sepl = wibox.widget.imagebox(beautiful.mpd_sepl)
-            mpd_sepr = wibox.widget.imagebox(beautiful.mpd_sepr)
-        elseif mpd_now.state == "pause" then
-            --widget:set_markup(markup.font("odstemplik Bold 18", "") ..
-            --                  markup.font("odstemplik Bold 18", "MPD PAUSED") ..
-            --                  markup.font("odstemplik Bold 18", ""))
-            play_pause_icon = wibox.widget.imagebox(beautiful.mpd_play)
-            mpd_sepl = wibox.widget.imagebox(beautiful.mpd_sepl)
-            mpd_sepr = wibox.widget.imagebox(beautiful.mpd_sepr)
-        else
-            widget:set_markup("")
-            play_pause_icon = wibox.widget.imagebox(beautiful.mpd_play)
-            mpd_sepl = wibox.widget.imagebox(nil)
-            mpd_sepr = wibox.widget.imagebox(nil)
-        end
-    end
-})
-
-music_widget = wibox.container.background(mpdwidget.widget)
-music_widget.bgimage=beautiful.widget_display
-music_widget:buttons(awful.util.table.join(awful.button({ }, 1,
-function () awful.util.spawn_with_shell(ncmpcpp) end)))
-
-prev_icon = awful.widget.launchers({ name = "prev",
-                                     image = "/home/valera/.config/awesome/icons/mpd/mpd_prev.png",
-                                     command = "mpc prev || ncmpcpp prev"})
-
-next_icon = awful.widget.launchers({ name = "next",
-                                     image = "/home/valera/.config/awesome/icons/mpd/mpd_next.png",
-                                     command = "mpc next || ncmpcpp next"})
-
-stop_icon:buttons(awful.util.table.join(
-    awful.button({ }, 1, function () stop_icon:set_image("/home/valera/.config/awesome/icons/mpd/mpd_pause.png") awful.util.spawn_with_shell("mpd") mpdwidget.update()  end),
-    awful.button({ }, 3, function () stop_icon:set_image("/home/valera/.config/awesome/icons/mpd/mpd_play.png") awful.util.spawn_with_shell("killall mpd") mpdwidget.update() end)
-))
 
 spr = wibox.widget.imagebox()
 spr.image = "/home/valera/.config/awesome/icons/mpd/separators/spr.png"
@@ -566,13 +547,13 @@ local t1 = awful.tag.find_by_name(awful.client.movetotag( "Ƅ" ),"Ƅ" )
 --local t2 = awful.tag.find_by_name(awful.client.movetotag( "ƀ" ),"ƀ" )
 local t2 = awful.tag.find_by_name(awful.client.movetotag( "Ɵ" ),"Ɵ" )
 --local t4 = awful.tag.find_by_name(awful.client.movetotag( "ƈ" ),"ƈ" )
---local t5 = awful.tag.find_by_name(awful.client.movetotag( "Ɗ" ),"Ɗ" )
+local t3 = awful.tag.find_by_name(awful.client.movetotag( "Ɗ" ),"Ɗ" )
 
 
 local t_menu ={
            {"____FIRST", function() awful.client.movetotag(t1) end },
            {"____SECOND", function() awful.client.movetotag(t2) end},
-          -- {"____THIRD", function() awful.client.movetotag(t3) end},
+           {"____THIRD", function() awful.client.movetotag(t3) end},
           -- {"____FOURTH", function() awful.client.movetotag(t4) end},
            --{"____FIFTH", function() awful.client.movetotag(t5) end},
 }
@@ -714,25 +695,25 @@ awful.screen.connect_for_each_screen(function(s)
            -- mykeyboardlayout,
             wibox.widget.systray(),
             space1,
-            fixedwidget5,
             fixedwidget4,
             space,
-            pacman1,
-            pacwidget,
+            --pacman1,
+            --pacwidget,
            -- space1,
 --            cpuwidget,
 --            space1,
 --            fixedwidget,
             --space,
+              fixedwidget5,
            -- cpuwidget,
             --space1,
             --fixedwidget,
             space2,
             baticcon,
-            batpct,
+            bat,
             space,
             tempwidget,
-            fixedwidget1,
+            sensors,
             space2,
             memicon,
             fixedwidget3,
