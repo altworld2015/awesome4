@@ -29,6 +29,7 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 --require("collision")()
 desktop_icons = require("desktop_icons")
 mpd = require("mpd")
+require("mic")
 ------------------------------
 ------------------------------
 --awful.spawn.with_shell("sleep 15 && xcompmgr -cCfF -r7 -o.65 -l-10 -t-8 -D7 &")
@@ -329,7 +330,7 @@ pacman1 = awful.widget.launcher({ name = "pacman",
 
 --
 -- Network Widget
-netwidget = blingbling.net({ interface = "wlan0", show_text = false })
+netwidget = blingbling.net({ interface = "wlan0", show_text = false, timeout = 5})
 netwidget:set_ippopup()
 netwidget:set_graph_line_color("#e65117ff")
 ----netwidget:set_background_color("#f7010150")
@@ -345,7 +346,7 @@ fixedwidget5 = wibox.layout.constraint(netwidget, "exact", 23)
 local bat_icon = wibox.widget.imagebox(beautiful.widget_battery)
 local bat = lain.widget.bat({
     battery = "BAT0",
-    timeout = 1,
+    timeout = 5,
     notify = "off",
     n_perc = {5,15},
     settings = function()
@@ -403,12 +404,14 @@ vicious.register(batpct, vicious.widgets.bat, function(widget, args)
   bat_charge = args[2]
   bat_time   = args[3]
   if args[1] == "-" then
-    if bat_charge > 70 then
+    if bat_charge > 80 then
       baticcon:set_image(beautiful.widget_batfull)
-    elseif bat_charge > 30 then
+    elseif bat_charge > 50 then
       baticcon:set_image(beautiful.widget_batmed)
-    elseif bat_charge > 10 then
+    elseif bat_charge > 20 then
       baticcon:set_image(beautiful.widget_batlow)
+    elseif bat_charge > 2 then
+      baticcon:set_image(beautiful.widget_batempty)
     else
       baticcon:set_image(beautiful.widget_batempty)
     end
@@ -723,6 +726,7 @@ awful.screen.connect_for_each_screen(function(s)
             space2,
             --mytextclock,
             --mytextclockicon,
+            micon,
             mytextclock1,
             space1,
             s.mylayoutbox,
