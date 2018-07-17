@@ -30,12 +30,14 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 desktop_icons = require("desktop_icons")
 mpd = require("mpd")
 require("mic")
+local watch = require("awful.widget.watch")
+mpdarc = require("mpdarc")
 ------------------------------
 ------------------------------
 --awful.spawn.with_shell("sleep 15 && xcompmgr -cCfF -r7 -o.65 -l-10 -t-8 -D7 &")
 --awful.util.spawn_with_shell("xcompmgr -cCfF &")
 --awful.util.spawn_with_shell("sleep 7 && killall xcompmgr &")
---awful.spawn.with_shell("sleep 12 && compton -icCfF -r7 -o.65 -l-10 -t-8 -D7 &")
+awful.spawn.with_shell("sleep 12 && compton -icCfF -r7 -o.65 -l-10 -t-8 -D7 &")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -248,7 +250,7 @@ memicon.image = "/home/valera/.icons/Black Diamond-V2/scalable/apps/gnome-system
 ---------------------
 tempwidget = awful.widget.launcher({ name = "tempwidget",
                                      image = "/home/valera/.config/awesome/appicons/speedownload.png",
-                                     command = "/home/valera/Документы/ww"})
+                                     command = "gis-weather"})
 ---------
 ---------
 local markup = lain.util.markup
@@ -260,11 +262,6 @@ local sensors = lain.widget.temp({
 })
 sensors = wibox.layout.constraint(widget, "exact", 45)
 widget:set_align("center")
----------
-memicon = awful.widget.launcher({ name = "prev",
-                                     image = "/home/valera/.config/awesome/appicons/xfce4-terminal.png",
-                                     command = "xfce4-terminal -e htop"})
-
 local function disptemp()
 	local f, infos
 	local capi = {
@@ -291,8 +288,13 @@ local function disptemp()
 end
 
 
-memicon:connect_signal('mouse::enter', function () disptemp(path) end)
-memicon:connect_signal('mouse::leave', function () naughty.destroy(showtempinfo) end)
+sensors:connect_signal('mouse::enter', function () disptemp(path) end)
+sensors:connect_signal('mouse::leave', function () naughty.destroy(showtempinfo) end)
+
+---------
+memicon = awful.widget.launcher({ name = "prev",
+                                     image = "/home/valera/.config/awesome/appicons/xfce4-terminal.png",
+                                     command = "xfce4-terminal -e htop"})
 
 
 -- Memory
@@ -305,6 +307,73 @@ memwidget.align = "center"
 fixedwidget3 = wibox.layout.constraint(memwidget, "exact", 50)
 --fixedwidget3:set_width(50)
 
+--- Widget which is shown when user clicks on the ram widget
+local w = wibox {
+    height = 200,
+    width = 400,
+    ontop = true,
+    screen = mouse.screen,
+    expand = true,
+   -- bg = '#1e252c',
+    font = "Z003",
+    bg = '#00000030',
+    max_widget_size = 500
+}
+
+w:setup {
+    border_width = 2,
+    font = "odstemplik Bold",
+    colors = {
+        '#f92603',
+        '#e65117',
+        '#2a0000',
+    },
+    display_labels = false,
+    forced_width = 25,
+    id = 'pie',
+    widget = wibox.widget.piechart,
+}
+
+local total, used, free, shared, buff_cache, available, total_swap, used_swap, free_swap
+
+local function getPercentage(value)
+    return math.floor(value / (total+total_swap) * 100 + 0.5) .. '%'
+end
+
+watch('bash -c "free | grep -z Mem.*Swap.*"', 1,
+    function(widget, stdout, stderr, exitreason, exitcode)
+        total, used, free, shared, buff_cache, available, total_swap, used_swap, free_swap =
+            stdout:match('(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*(%d+)%s*Swap:%s*(%d+)%s*(%d+)%s*(%d+)')
+
+        widget.data = { used, total-used } widget.data = { used, total-used }
+
+        if w.visible then
+            w.pie.data_list = {
+                {'used ' .. getPercentage(used + used_swap), used + used_swap},
+                {'free ' .. getPercentage(free + free_swap), free + free_swap},
+                {'buff_cache ' .. getPercentage(buff_cache), buff_cache}
+            }
+        end
+    end,
+   memicon
+)
+
+memwidget:buttons(
+    awful.util.table.join(
+        awful.button({}, 1, function()
+            awful.placement.top_right(w, { margins = {top = 25, right = 110}})
+            w.pie.data_list = {
+                {'used ' .. getPercentage(used + used_swap), used + used_swap},
+                {'free ' .. getPercentage(free + free_swap), free + free_swap},
+                {'buff_cache ' .. getPercentage(buff_cache), buff_cache}
+            }
+            w.pie.display_labels = true
+            w.visible = not w.visible
+        end)
+    )
+)
+
+-------------------
 volicon = awful.widget.launcher({ name = "pavucontrol",
                                      image = "/home/valera/.config/awesome/appicons/armagetronad.png",
                                      command = "pavucontrol"})
@@ -346,7 +415,7 @@ fixedwidget5 = wibox.layout.constraint(netwidget, "exact", 23)
 local bat_icon = wibox.widget.imagebox(beautiful.widget_battery)
 local bat = lain.widget.bat({
     battery = "BAT0",
-    timeout = 5,
+    timeout = 15,
     notify = "off",
     n_perc = {5,15},
     settings = function()
@@ -370,18 +439,21 @@ local bat = lain.widget.bat({
                 bat_icon:set_image(beautiful.widget_ac)
             elseif bat_now.status == "Full" then
                 widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "~" .. bat_now.perc .. "%")))
-                bat_icon:set_image(beautiful.widget_battery)
+                bat_icon:set_image(beautiful.widget_batfull)
+            elseif tonumber(bat_now.perc) <= 10 then
+                bat_icon:set_image(beautiful.widget_batempty)
+                widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "-" .. bat_now.perc .. "%")))
             elseif tonumber(bat_now.perc) <= 35 then
-                bat_icon:set_image(beautiful.widget_battery_empty)
+                bat_icon:set_image(beautiful.widget_batlow)
                 widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "-" .. bat_now.perc .. "%")))
             elseif tonumber(bat_now.perc) <= 80 then
-                bat_icon:set_image(beautiful.widget_battery_low)
+                bat_icon:set_image(beautiful.widget_batmed)
                 widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "-" .. bat_now.perc .. "%")))
             elseif tonumber(bat_now.perc) <= 99 then
-                bat_icon:set_image(beautiful.widget_battery)
+                bat_icon:set_image(beautiful.widget_batfull)
                 widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "-" .. bat_now.perc .. "%")))
             else
-                bat_icon:set_image(beautiful.widget_battery)
+                bat_icon:set_image(beautiful.widget_batfull)
                 widget:set_markup(markup.font("odstemplik Bold 15", markup.fg.color("#e65117", "-" .. bat_now.perc .. "%")))
             end
         else
@@ -393,61 +465,9 @@ local bat = lain.widget.bat({
 local bat_widget = wibox.container.background(bat.widget)
 bat_widget.bgimage=beautiful.widget_display
 
----{{{-Batery------------------------------------------------------
-baticcon = wibox.widget.imagebox()
-baticcon:set_image(beautiful.widget_batfull)
-batpct = wibox.widget.textbox()
-batpct:set_font("odstemplik Bold 14")
---batpct:set_markup("<span color=\"#e65117\">bat_charge .. "%"</span>")
-vicious.register(batpct, vicious.widgets.bat, function(widget, args)
-  bat_state  = args[1]
-  bat_charge = args[2]
-  bat_time   = args[3]
-  if args[1] == "-" then
-    if bat_charge > 80 then
-      baticcon:set_image(beautiful.widget_batfull)
-    elseif bat_charge > 50 then
-      baticcon:set_image(beautiful.widget_batmed)
-    elseif bat_charge > 20 then
-      baticcon:set_image(beautiful.widget_batlow)
-    elseif bat_charge > 2 then
-      baticcon:set_image(beautiful.widget_batempty)
-    else
-      baticcon:set_image(beautiful.widget_batempty)
-    end
-  else
-    baticcon:set_image(beautiful.widget_ac)
-    if args[1] == "+" then
-    end
-  end
-  return ""
-  --  return  function("<span color=\"#e65117\"><b>"" .. args[2] .. "%"</b></span>") end
-end, nil, "BAT0")
--- Buttons
-function popup_bat()
-  local state = ""
-  if bat_state == "↯" then
-    state = "Full"
-  elseif bat_state == "↯" then
-    state = "Charged"
-  elseif bat_state == "+" then
-    state = "Charging"
-  elseif bat_state == "-" then
-    state = "Discharging"
-  elseif bat_state == "⌁" then
-    state = "Not charging"
-  else
-    state = "Unknown"
-  end
-  naughty.notify { text = "Charge : " .. bat_charge .. "%\nState  : " .. state ..
-    " (" .. bat_time .. ")", timeout = 5, hover_timeout = 0.5 }
-end
---batpct:buttons(awful.util.table.join(awful.button({ }, 1, popup_bat)))
---baticcon:buttons(batpct:buttons())
-batpct.align = "center"
-fixbat = wibox.layout.constraint(batpct, "exact", 30)
----------------------------------------------------------------------------
 
+---------------------------------------------------------------------------
+fixempd = wibox.layout.constraint(mpdarc, "exact", 17)
 
 spr = wibox.widget.imagebox()
 spr.image = "/home/valera/.config/awesome/icons/mpd/separators/spr.png"
@@ -462,7 +482,7 @@ myapp1start = awful.widget.launcher({ name = "firefox",
 -- Create a laucher widget
 myapp2start = awful.widget.launcher({ name = "thunar",
                                      image = "/home/valera/.config/awesome/appicons/thunar.png",
-                                     command = "dbus-launch thunar"})
+                                     command = "pcmanfm"})
 
 -- Create a laucher widget
 myapp3start = awful.widget.launcher({ name = "xfce4-terminal",
@@ -472,7 +492,7 @@ myapp3start = awful.widget.launcher({ name = "xfce4-terminal",
 -- Create a laucher widget
 myapp4start = awful.widget.launcher({ name = "fbreader",
                                      image = "/home/valera/.config/awesome/appicons/cr3.png",
-                                     command = "cr3"})
+                                     command = "FBReader"})
 
 -- Create a laucher widget
 myapp5start = awful.widget.launcher({ name = "palemoon",
@@ -635,7 +655,8 @@ awful.screen.connect_for_each_screen(function(s)
     -- Wallpaper
     set_wallpaper(s)
 
-
+    s.systray = wibox.widget.systray()
+    s.systray.visible = false
 
 
     -- Create a promptbox for each screen
@@ -670,6 +691,8 @@ awful.screen.connect_for_each_screen(function(s)
               -- MPD widget
           spr,
           prev_icon,
+          spr,
+          fixempd,
           spr,
           stop_icon,
           spr,
@@ -712,7 +735,7 @@ awful.screen.connect_for_each_screen(function(s)
             --space1,
             --fixedwidget,
             space2,
-            baticcon,
+            bat_icon,
             bat,
             space,
             tempwidget,
@@ -745,6 +768,9 @@ root.buttons(awful.util.table.join(
 
 -- {{{ Key bindings
 globalkeys = awful.util.table.join(
+    awful.key({ modkey }, "=", function ()
+    awful.screen.focused().systray.visible = not awful.screen.focused().systray.visible
+    end, {description = "Toggle systray visibility", group = "custom"}),
     awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
@@ -757,7 +783,7 @@ globalkeys = awful.util.table.join(
     awful.key({ }, "F7", function () scratch.drop("xfce4-terminal", "bottom", nil, nil, 0.30) end),
     --awful.key({ }, "F2", function () scratch.drop("opera", c, nil, nil, 1.00, 0.90) end),
     awful.key({ 0                 }, "F2",    function () awful.util.spawn ("opera") end),
-    awful.key({ 0                 }, "F3",    function () awful.util.spawn ("thunar") end),
+ --   awful.key({ 0                 }, "F3",    function () awful.util.spawn ("thunar") end),
     awful.key({ }, "F2", function () awful.spawn("FBReader") end),
     --awful.key({ }, "F3", function () awful.spawn("thunar") end),
     awful.key({ modkey,           }, "j",
@@ -1052,6 +1078,9 @@ awful.rules.rules = {
         { rule = { class = "cantata" },
        properties = { floating = true }
  },
+    { rule = { class = "Gsopcast" },
+       properties = { floating = true }
+ },
    { rule = { class = "Deadbeef" },
       properties = { floating = true, border_width = 0 } },
       { rule = { class = "Dialog" },
@@ -1172,7 +1201,7 @@ awful.util.spawn_with_shell("run_once kbdd")
 --awful.util.spawn_with_shell("xset s off && xset -dpms &")
 --awful.util.spawn_with_shell("run_once google-chrome-stable")
 awful.util.spawn_with_shell("run_once /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
---awful.util.spawn_with_shell("run_once sleep 3 && /usr/bin/nm-applet --sm-disable")
+awful.util.spawn_with_shell("run_once sleep 3 && /usr/bin/nm-applet --sm-disable")
 --awful.util.spawn_with_shell("run_once /usr/bin/touchpad11")
 awful.util.spawn_with_shell("setxkbmap -layout 'us, ru' -option 'grp:caps_toggle'")
 --awful.util.spawn_with_shell("run_once start-pulseaudio-x11")
