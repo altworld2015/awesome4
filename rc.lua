@@ -218,7 +218,7 @@ mytextclockicon = wibox.widget.imagebox()
 mytextclockicon.image = "/home/valera/.icons/Black Diamond-V2/scalable/actions/editdelete.png"
 --mytextclockicon:set_image("/home/valera/sharingan-icons-1.5/emblem-urgent.png")
 -- calendar
-lain.widget.calendar({
+lain.widget.cal({
     attach_to = { mytextclock1 }
 })
 --widgets.calendar:attach(mytextclockicon)
