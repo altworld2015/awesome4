@@ -34,10 +34,10 @@ local watch = require("awful.widget.watch")
 mpdarc = require("mpdarc")
 ------------------------------
 ------------------------------
---awful.spawn.with_shell("sleep 15 && xcompmgr -cCfF -r7 -o.65 -l-10 -t-8 -D7 &")
+awful.spawn.with_shell("sleep 15 && xcompmgr -cCfF -r7 -o.65 -l-10 -t-8 -D7 &")
 --awful.util.spawn_with_shell("xcompmgr -cCfF &")
 --awful.util.spawn_with_shell("sleep 7 && killall xcompmgr &")
-awful.spawn.with_shell("sleep 12 && compton -icCfF -r7 -o.65 -l-10 -t-8 -D7 &")
+----awful.spawn.with_shell("sleep 12 && compton -icCfF -r7 -o.65 -l-10 -t-8 -D7 &")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
