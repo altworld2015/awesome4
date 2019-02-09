@@ -30,8 +30,11 @@ local hotkeys_popup = require("awful.hotkeys_popup").widget
 --require("collision")()
 blingbling.superproperties.init('the_theme_path')
 mygraph = blingbling.line_graph()
+
 --------
+beautiful.init("/home/valera/.config/awesome/themes/colored/theme.lua")
 -------
+
 my_widget = awful.widget.launcher({ name = "firefox",
                                      image = "/home/valera/.config/awesome/appicons/browser.png",
                                      command = "/home/valera/tor/Browser/start-tor-browser --detach"
