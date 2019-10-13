@@ -176,7 +176,7 @@ mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
 --awful.tag({ 1, 2, 3, 4, 5 }, s, awful.layout.layouts[1])
 
 --local names = { "Ƅ", "ƀ", "Ɵ", "ƈ", "Ɗ" }
-local names = { "Ƅ", "Ɵ", "Ɗ" }
+local names = { "❡", "♫", "✉" }
 local l = awful.layout.suit  -- Just to save some typing: use an alias.
 --local layouts = { l.tile.bottom, l.tile.bottom, l.tile.bottom, l.spiral.dwindle, l.floating }
 local layouts = { l.tile.bottom, l.tile.bottom, l.floating }
@@ -250,7 +250,7 @@ memicon.image = "/home/valera/.icons/Black Diamond-V2/scalable/apps/gnome-system
 ---------------------
 tempwidget = awful.widget.launcher({ name = "tempwidget",
                                      image = "/home/valera/.config/awesome/appicons/speedownload.png",
-                                     command = "gis-weather"})
+                                     command = "/home/valera/gis-weather-0.8.4.1/weather"})
 ---------
 ---------
 local markup = lain.util.markup
@@ -566,11 +566,11 @@ local taglist_buttons = awful.util.table.join(
 -------------
 ---Client_menu
 
-local t1 = awful.tag.find_by_name(awful.client.movetotag( "Ƅ" ),"Ƅ" )
+local t1 = awful.tag.find_by_name(awful.client.movetotag( "❡" ),"❡" )
 --local t2 = awful.tag.find_by_name(awful.client.movetotag( "ƀ" ),"ƀ" )
-local t2 = awful.tag.find_by_name(awful.client.movetotag( "Ɵ" ),"Ɵ" )
+local t2 = awful.tag.find_by_name(awful.client.movetotag( "♫" ),"♫" )
 --local t4 = awful.tag.find_by_name(awful.client.movetotag( "ƈ" ),"ƈ" )
-local t3 = awful.tag.find_by_name(awful.client.movetotag( "Ɗ" ),"Ɗ" )
+local t3 = awful.tag.find_by_name(awful.client.movetotag( "✉" ),"✉" )
 
 
 local t_menu ={
