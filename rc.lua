@@ -261,7 +261,8 @@ local sensors = lain.widget.temp({
     end
 })
 sensors = wibox.layout.constraint(widget, "exact", 45)
-widget:set_align("center")
+--widget:set_align("center")
+sensors.align = "center"
 local function disptemp()
 	local f, infos
 	local capi = {
@@ -694,7 +695,7 @@ local function make_panel_hidden()
     s.wibox_plug.visible = true
 end
 local function panel_autohide(focused_client)
-    if focused_client.class == 'Opera'
+    if focused_client.class == 'Opera2'
             and focused_client:isvisible() then
         make_panel_hidden()
         s.mywibox:connect_signal("mouse::leave", make_panel_hidden)
